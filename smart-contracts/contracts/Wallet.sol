@@ -4,9 +4,12 @@ pragma solidity ^0.8.12;
 import {IEntryPoint} from "@account-abstraction/contracts/interfaces/IEntryPoint.sol";
 import {BaseAccount} from "@account-abstraction/contracts/core/BaseAccount.sol";
 import {UserOperation} from "@account-abstraction/contracts/interfaces/UserOperation.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {ECDSA} from "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
-contract Wallet is BaseAccount {
+contract Wallet is BaseAccount, Initializable {
+
+    event WalletInitialized(IEntryPoint indexed entryPoint, address[] owners);
 
     using ECDSA for bytes32;
     address[] public owners;
@@ -17,6 +20,17 @@ contract Wallet is BaseAccount {
     constructor(IEntryPoint _entryPoint, address _walletFactory) {
         entryPointCont = _entryPoint;
         walletFactory = _walletFactory;
+    }
+
+    // functions for proxy
+    function initialize(address[] memory initialOwners) public initializer {
+        _initialize(initialOwners);
+    }
+
+    function _initialize(address[] memory initialOwners) internal {
+        require(initialOwners.length>0,"[WALLET_INITIALIZE]: atleast one owner required");
+        owners=initialOwners;
+        emit WalletInitialized(entryPointCont,initialOwners);
     }
 
     function entryPoint() public view override returns(IEntryPoint) {
@@ -49,6 +63,15 @@ contract Wallet is BaseAccount {
         }
 
         return 0;
+    }
+
+    function _call(address target,uint256 value,bytes memory data) internal {
+        (bool success,bytes memory result)=target.call{value:value}(data);
+        if(!success){
+            assembly {
+                revert(add(result,32),mload(result))
+            }
+        }
     }
 
 }
