@@ -17,6 +17,14 @@ contract Wallet is BaseAccount, Initializable {
     address public immutable walletFactory;
     IEntryPoint private immutable entryPointCont;
 
+    modifier _requireFromEntryPointOrFactory() {
+        require(
+            msg.sender==address(entryPointCont) || msg.sender == walletFactory,
+            "[WALLET]: Unauthorized access."
+        );  
+        _;
+    }
+
     constructor(IEntryPoint _entryPoint, address _walletFactory) {
         entryPointCont = _entryPoint;
         walletFactory = _walletFactory;
@@ -32,6 +40,7 @@ contract Wallet is BaseAccount, Initializable {
         owners=initialOwners;
         emit WalletInitialized(entryPointCont,initialOwners);
     }
+    // functions for proxy ends
 
     function entryPoint() public view override returns(IEntryPoint) {
         return entryPointCont;
@@ -71,6 +80,25 @@ contract Wallet is BaseAccount, Initializable {
             assembly {
                 revert(add(result,32),mload(result))
             }
+        }
+    }
+
+    function execute(
+        address destination,  // target address
+        uint256 value,
+        bytes calldata func   // functions to call
+    ) external _requireFromEntryPointOrFactory {
+        _call(destination,value,func);
+    }
+
+    function executeBatch(
+        address[] calldata destinations,
+        uint256[] calldata values,
+        bytes[] calldata functions
+    ) external _requireFromEntryPointOrFactory {
+        require(destinations.length==functions.length && values.length==functions.length,"[WALLET_EXECUTE_BATCH]: Invalid paramaters");
+        for(uint256 i=0;i<destinations.length;i++){
+            _call(destinations[i],values[i],functions[i]);
         }
     }
 
