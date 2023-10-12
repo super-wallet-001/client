@@ -4,6 +4,7 @@ import { ENTRY_POINT_ABI, WALLET_ABI, WALLET_FACTORY_ABI, WALLET_FACTORY_ADDRESS
 
 export const provider = new providers.JsonRpcProvider(process.env.NEXT_PUBLIC_STACKUP_API_ENDPOINT);
 
+console.log(provider);
 
 export const entryPointContract = new Contract(
     Constants.ERC4337.EntryPoint,
