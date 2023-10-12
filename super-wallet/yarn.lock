@@ -3724,6 +3724,7 @@ __metadata:
     "@uniswap/sdk-core": ~4.0.1
     "@uniswap/v2-sdk": ~3.0.1
     autoprefixer: ~10.4.12
+    axios: ^1.5.1
     blo: ~1.0.1
     daisyui: ~3.5.1
     eslint: ~8.24.0
