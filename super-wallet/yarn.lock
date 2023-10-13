@@ -3774,6 +3774,7 @@ __metadata:
     react-hot-toast: ~2.4.0
     tailwindcss: ~3.3.3
     typescript: ~5.1.6
+    typewriter-effect: ^2.21.0
     use-debounce: ~8.0.4
     usehooks-ts: ~2.9.1
     userop: ^0.3.3
@@ -4500,11 +4501,11 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*":
-  version: 20.8.4
-  resolution: "@types/node@npm:20.8.4"
+  version: 20.8.5
+  resolution: "@types/node@npm:20.8.5"
   dependencies:
     undici-types: ~5.25.1
-  checksum: 2106b9ef9750297cac68249428d7067c4d22c26908854165b70a164e34e900f4c34bb9bf3887c9391206b500d3e87171d03b1846e25788925236a0354390d278
+  checksum: 4bca4e4f6307a6f5dc78812015eca9c5a998b35fcf3ba4058c9851d3dde2b22c914fa25a85b804eab5af2ab95375d15943dce8e9ba5e01d15f4bf516ca0d2816
   languageName: node
   linkType: hard
 
@@ -4730,24 +4731,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.42.0":
-  version: 5.62.0
-  resolution: "@typescript-eslint/parser@npm:5.62.0"
-  dependencies:
-    "@typescript-eslint/scope-manager": 5.62.0
-    "@typescript-eslint/types": 5.62.0
-    "@typescript-eslint/typescript-estree": 5.62.0
-    debug: ^4.3.4
-  peerDependencies:
-    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: d168f4c7f21a7a63f47002e2d319bcbb6173597af5c60c1cf2de046b46c76b4930a093619e69faf2d30214c29ab27b54dcf1efc7046a6a6bd6f37f59a990e752
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/parser@npm:latest":
+"@typescript-eslint/parser@latest":
   version: 6.7.5
   resolution: "@typescript-eslint/parser@npm:6.7.5"
   dependencies:
@@ -4762,6 +4746,23 @@ __metadata:
     typescript:
       optional: true
   checksum: 63f988c1c87697bd20487933be952b97f7a5f2a9977f505af671c7d49367fc01ca508817576646caa937c15cc0a0ef1e86adff9111eb19df8b489e7436d10620
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/parser@npm:^5.42.0":
+  version: 5.62.0
+  resolution: "@typescript-eslint/parser@npm:5.62.0"
+  dependencies:
+    "@typescript-eslint/scope-manager": 5.62.0
+    "@typescript-eslint/types": 5.62.0
+    "@typescript-eslint/typescript-estree": 5.62.0
+    debug: ^4.3.4
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: d168f4c7f21a7a63f47002e2d319bcbb6173597af5c60c1cf2de046b46c76b4930a093619e69faf2d30214c29ab27b54dcf1efc7046a6a6bd6f37f59a990e752
   languageName: node
   linkType: hard
 
@@ -7861,13 +7862,13 @@ __metadata:
   linkType: hard
 
 "define-data-property@npm:^1.0.1":
-  version: 1.1.0
-  resolution: "define-data-property@npm:1.1.0"
+  version: 1.1.1
+  resolution: "define-data-property@npm:1.1.1"
   dependencies:
     get-intrinsic: ^1.2.1
     gopd: ^1.0.1
     has-property-descriptors: ^1.0.0
-  checksum: 7ad4ee84cca8ad427a4831f5693526804b62ce9dfd4efac77214e95a4382aed930072251d4075dc8dc9fc949a353ed51f19f5285a84a788ba9216cc51472a093
+  checksum: a29855ad3f0630ea82e3c5012c812efa6ca3078d5c2aa8df06b5f597c1cde6f7254692df41945851d903e05a1668607b6d34e778f402b9ff9ffb38111f1a3f0d
   languageName: node
   linkType: hard
 
@@ -8180,9 +8181,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.4.535":
-  version: 1.4.551
-  resolution: "electron-to-chromium@npm:1.4.551"
-  checksum: 80f05eaefaaaf99b7833318c728b9aa7013fbdc9ee96dcc79b25ae3ebdddc62e2ed8b0153c0e6e6e2f1f600b4fa164774cdabb0674aa0a23373e7edbace0febb
+  version: 1.4.554
+  resolution: "electron-to-chromium@npm:1.4.554"
+  checksum: cbac43c50b43777327f4a7bf149ee3088c1da8b91bbcd80f78d2cc77bc52763f6d0941574499239d9caefd3430d3093f865e5f1093371418f7d6b70301eeae9b
   languageName: node
   linkType: hard
 
@@ -10097,9 +10098,9 @@ __metadata:
   linkType: hard
 
 "fraction.js@npm:^4.3.6":
-  version: 4.3.6
-  resolution: "fraction.js@npm:4.3.6"
-  checksum: e96ae77e64ebfd442d3a5a01a3f0637b0663fc2440bcf2841b3ad9341ba24c81fb2e3e7142e43ef7d088558c6b3f8609df135b201adc7a1c674aea6a71384162
+  version: 4.3.7
+  resolution: "fraction.js@npm:4.3.7"
+  checksum: e1553ae3f08e3ba0e8c06e43a3ab20b319966dfb7ddb96fd9b5d0ee11a66571af7f993229c88ebbb0d4a816eb813a24ed48207b140d442a8f76f33763b8d1f3f
   languageName: node
   linkType: hard
 
@@ -10248,9 +10249,9 @@ __metadata:
   linkType: hard
 
 "function-bind@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "function-bind@npm:1.1.1"
-  checksum: b32fbaebb3f8ec4969f033073b43f5c8befbb58f1a79e12f1d7490358150359ebd92f49e72ff0144f65f2c48ea2a605bff2d07965f548f6474fd8efd95bf361a
+  version: 1.1.2
+  resolution: "function-bind@npm:1.1.2"
+  checksum: 2b0ff4ce708d99715ad14a6d1f894e2a83242e4a52ccfcefaee5e40050562e5f6dafc1adbb4ce2d4ab47279a45dc736ab91ea5042d843c3c092820dfe032efb1
   languageName: node
   linkType: hard
 
@@ -10336,7 +10337,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-func-name@npm:^2.0.0, get-func-name@npm:^2.0.2":
+"get-func-name@npm:^2.0.1, get-func-name@npm:^2.0.2":
   version: 2.0.2
   resolution: "get-func-name@npm:2.0.2"
   checksum: 3f62f4c23647de9d46e6f76d2b3eafe58933a9b3830c60669e4180d6c601ce1b4aa310ba8366143f55e52b139f992087a9f0647274e8745621fa2af7e0acf13b
@@ -12401,11 +12402,11 @@ __metadata:
   linkType: hard
 
 "loupe@npm:^2.3.6":
-  version: 2.3.6
-  resolution: "loupe@npm:2.3.6"
+  version: 2.3.7
+  resolution: "loupe@npm:2.3.7"
   dependencies:
-    get-func-name: ^2.0.0
-  checksum: cc83f1b124a1df7384601d72d8d1f5fe95fd7a8185469fec48bb2e4027e45243949e7a013e8d91051a138451ff0552310c32aa9786e60b6a30d1e801bdc2163f
+    get-func-name: ^2.0.1
+  checksum: 96c058ec7167598e238bb7fb9def2f9339215e97d6685d9c1e3e4bdb33d14600e11fe7a812cf0c003dfb73ca2df374f146280b2287cae9e8d989e9d7a69a203b
   languageName: node
   linkType: hard
 
@@ -14340,6 +14341,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"performance-now@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "performance-now@npm:2.1.0"
+  checksum: 534e641aa8f7cba160f0afec0599b6cecefbb516a2e837b512be0adbe6c1da5550e89c78059c7fabc5c9ffdf6627edabe23eb7c518c4500067a898fa65c2b550
+  languageName: node
+  linkType: hard
+
 "periscopic@npm:^3.0.0":
   version: 3.1.0
   resolution: "periscopic@npm:3.1.0"
@@ -14946,6 +14954,15 @@ __metadata:
   version: 5.1.1
   resolution: "quick-lru@npm:5.1.1"
   checksum: a516faa25574be7947969883e6068dbe4aa19e8ef8e8e0fd96cddd6d36485e9106d85c0041a27153286b0770b381328f4072aa40d3b18a19f5f7d2b78b94b5ed
+  languageName: node
+  linkType: hard
+
+"raf@npm:^3.4.1":
+  version: 3.4.1
+  resolution: "raf@npm:3.4.1"
+  dependencies:
+    performance-now: ^2.1.0
+  checksum: 50ba284e481c8185dbcf45fc4618ba3aec580bb50c9121385d5698cb6012fe516d2015b1df6dd407a7b7c58d44be8086108236affbce1861edd6b44637c8cd52
   languageName: node
   linkType: hard
 
@@ -17356,6 +17373,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"typewriter-effect@npm:^2.21.0":
+  version: 2.21.0
+  resolution: "typewriter-effect@npm:2.21.0"
+  dependencies:
+    prop-types: ^15.8.1
+    raf: ^3.4.1
+  peerDependencies:
+    react: ^17.x || ^18.x
+    react-dom: ^17.x || ^18.x
+  checksum: bd2fe63bfa84880a1be4b3e812d3e264ea641097dd54f4d06e62998e307b54388a826fe3c7512c094aa3893de7ed6f3d99d8b90fb23411dfe424df2f799c8ad8
+  languageName: node
+  linkType: hard
+
 "typical@npm:^4.0.0":
   version: 4.0.0
   resolution: "typical@npm:4.0.0"
@@ -17840,8 +17870,8 @@ __metadata:
   linkType: hard
 
 "viem@npm:^1.0.0":
-  version: 1.16.4
-  resolution: "viem@npm:1.16.4"
+  version: 1.16.5
+  resolution: "viem@npm:1.16.5"
   dependencies:
     "@adraffy/ens-normalize": 1.9.4
     "@noble/curves": 1.2.0
@@ -17856,7 +17886,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: a9932a74be1f32e06d0bc823fdd46feea5954c2ef0060334550461974503e3811095af008fd10a039d369d830016c034bed36d4ededee29ac0fd5d460a57c69c
+  checksum: cc07bbc8ebf616c2cc6e14f08eea59d1b34df294d1dcba72090bf10e224e87c17014db593bcff223fe6c7c30999448d786d67d9e18691906f51900db940af821
   languageName: node
   linkType: hard
 

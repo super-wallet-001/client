@@ -1,7 +1,6 @@
 import type { NextApiResponse } from "next";
 import { prisma } from "~~/utils/db";
 import { walletFactoryContract } from "~~/utils/getContracts";
-import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 
@@ -24,6 +23,7 @@ export default async function handler(
     if(req.method==="POST"){
         try{
 
+            // @ts-ignore
             const {signers}:{signers:string[]} = req.body;
     
             const salt = Math.floor(Math.random()*1000000);
