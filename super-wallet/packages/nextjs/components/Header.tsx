@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { Bars3Icon, BugAntIcon, MagnifyingGlassIcon, SparklesIcon,PlusCircleIcon,BanknotesIcon,CreditCardIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon,PlusCircleIcon,BanknotesIcon,CreditCardIcon ,WalletIcon} from "@heroicons/react/24/outline";
 import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
 import { useOutsideClick } from "~~/hooks/scaffold-eth";
 
@@ -43,6 +43,12 @@ export const Header = () => {
         <NavLink href="/create-scw">
           <PlusCircleIcon className="h-4 w-4" />
           Create new wallet
+        </NavLink>
+      </li>
+      <li>
+        <NavLink href="/wallet">
+          <WalletIcon className="h-4 w-4" />
+          Manage
         </NavLink>
       </li>
       <li>

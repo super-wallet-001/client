@@ -16,7 +16,7 @@ const Home: NextPage = () => {
 
     <>
       <MetaHeader />
-      <div className={`${!isDarkMode ? 'text-black' : 'text-white'} font-blod py-32 text-center space-y-5`}>
+      <div className={`${!isDarkMode ? 'text-black' : 'text-white'} font-bold py-32 text-center space-y-5`}>
         <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
           <h1>One wallet, multiple chains</h1>
           <div className="text-transparent pb-6 bg-clip-text bg-gradient-to-r from-blue-300 to-blue-700">
@@ -35,7 +35,7 @@ const Home: NextPage = () => {
           </div>
         </div>
         <Link href={"/create-scw"}>
-          <div className="btn btn-primary btn-md font-normal cursor-pointer gap-0 mt-10">
+          <div className="btn btn-primary btn-md font-normal cursor-pointer gap-0 mt-24">
             <span>Get started</span>
             <ArrowRightIcon className="h-4 w-4 ml-2" />
           </div>
