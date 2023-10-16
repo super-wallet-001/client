@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 
 export default function Heading() {
     return (
-        <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
+        <div className="mt-20 text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
             <h1>
                 One Wallet, Multiple Chains
             </h1>
