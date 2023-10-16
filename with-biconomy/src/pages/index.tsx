@@ -16,12 +16,13 @@ import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "
 import { ethers } from "ethers";
 import Head from "next/head";
 import { useStateContext } from "@/context";
+import Heading from "@/components/heading";
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  
-  const {scwLoading,mainAddress,connect} = useStateContext();
+
+  const { scwLoading, mainAddress, connect } = useStateContext();
 
   return (
     <>
@@ -29,15 +30,9 @@ export default function Home() {
         <title>Super Wallet</title>
         <meta name="description" content="A multichain ethereum wallet" />
       </Head>
-      <main>
-        Multichain Payment Infrastructure
-        {!scwLoading && !mainAddress && (
-          <Button onClick={connect}>
-            Connect Wallet
-          </Button>
-        )}
-        {mainAddress && <h2>Smart Account: {mainAddress}</h2>}
-      </main>
+      <div className="font-bold py-32 text-center space-y-5">
+        <Heading />
+      </div>
     </>
   )
 }
