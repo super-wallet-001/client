@@ -22,8 +22,6 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
 
-  const { scwLoading, mainAddress, connect } = useStateContext();
-
   return (
     <>
       <Head>

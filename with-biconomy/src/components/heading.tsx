@@ -1,8 +1,19 @@
 import { cn } from "@/lib/utils";
 import TypewriterComponent from "typewriter-effect";
 import { Button } from "./ui/button";
+import { useStateContext } from "@/context";
+import { useRouter } from "next/router";
 
 export default function Heading() {
+
+    const { connect } = useStateContext();
+    const router = useRouter();
+
+    async function connectAndNavigate() {
+        await connect();
+        router.push("/dashboard");
+    }
+
     return (
         <div className="mt-20 text-4xl sm:text-5xl md:text-6xl lg:text-7xl space-y-5 font-extrabold">
             <h1>
@@ -26,7 +37,7 @@ export default function Heading() {
                 A multichain smart contract ethereum wallet.
             </div>
             <div>
-                <Button className="md:text-lg p-4 md:p-6 rounded-full font-semibold">
+                <Button className="md:text-lg p-4 md:p-6 rounded-full font-semibold" onClick={connectAndNavigate}>
                     Get Started!
                 </Button>
             </div>
