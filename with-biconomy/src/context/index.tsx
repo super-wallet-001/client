@@ -1,4 +1,4 @@
-import { useState, useContext, createContext, ReactNode } from "react";
+import { useState, useContext, createContext, ReactNode, useEffect } from "react";
 import { BiconomySmartAccountV2, DEFAULT_ENTRYPOINT_ADDRESS } from "@biconomy/account"
 import {
     ParticleAuthModule,
@@ -37,6 +37,29 @@ export function StateContextProvider({ children }: StateProviderProps) {
     const [smartAccount, setSmartAccount] = useState<BiconomySmartAccountV2 | null>(null);
     const [provider, setProvider] = useState<ethers.providers.Provider | null>(null)
 
+    function saveStateToLocalStorage(address: string, smartAccount: BiconomySmartAccountV2, provider: ethers.providers.Provider) {
+        const stateToSave = {
+            mainAddress: address,
+            smartAccount,
+            provider,
+        };
+        localStorage.setItem('appState', JSON.stringify(stateToSave));
+    };
+
+    function loadStateFromLocalStorage() {
+        const savedState = localStorage.getItem('appState');
+        if (savedState) {
+            const parsedState = JSON.parse(savedState);
+            setAddress(parsedState.mainAddress);
+            setSmartAccount(parsedState.smartAccount);
+            setProvider(parsedState.provider);
+        }
+    };
+
+    useEffect(() => {
+        loadStateFromLocalStorage();
+    }, []);
+
     const particle = new ParticleAuthModule.ParticleNetwork({
         projectId: process.env.NEXT_PUBLIC_PARTICLE_PROJECT_ID as string,
         clientKey: process.env.NEXT_PUBLIC_PARTICLE_CLIENT_ID as string,
@@ -57,7 +80,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
         paymasterUrl: process.env.NEXT_PUBLIC_BICONOMY_PAYMASTER as string,
     })
 
-    const connect = async () => {
+    async function connect() {
         try {
             setScwLoading(true)
             const userInfo = await particle.auth.login();
@@ -85,6 +108,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
             setAddress(walletAddress);
             setSmartAccount(biconomySmartAccount);
             setScwLoading(false);
+            saveStateToLocalStorage(walletAddress, biconomySmartAccount, web3Provider);
         } catch (error) {
             console.error("[ERROR_WHILE_CREATING_SMART_ACCOUNT]: ", error);
         }
