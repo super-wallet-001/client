@@ -33,8 +33,12 @@ export default function SendTransection() {
                     </div>
                 </div>
                 <div className="grid gap-2">
-                    <Label htmlFor="subject">Address</Label>
-                    <Input id="subject" placeholder="Wallet Address" />
+                    <Label htmlFor="address">Address</Label>
+                    <Input id="address" placeholder="Wallet Address" />
+                </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="amount">Amount</Label>
+                    <Input id="amount" placeholder="Amount in ETH" />
                 </div>
             </CardContent>
 

@@ -54,7 +54,7 @@ export default function DashboardPage() {
                                     <CardTitle>
                                         ETH Sepolia
                                     </CardTitle>
-                                    <svg className="h-5 w-5 text-muted-foreground" enable-background="new 0 0 1920 1920" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="m960 730.9-539.8 245.4 539.8 319.1 539.8-319.1z" opacity=".6" /><path d="m420.2 976.3 539.8 319.1v-564.5-650.3z" opacity=".45" /><path d="m960 80.6v650.3 564.5l539.8-319.1z" opacity=".8" /><path d="m420.2 1078.7 539.8 760.7v-441.8z" opacity=".45" /><path d="m960 1397.6v441.8l540.2-760.7z" opacity=".8" /></svg>
+                                    <svg className="h-5 w-5 text-muted-foreground" enableBackground="new 0 0 1920 1920" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="m960 730.9-539.8 245.4 539.8 319.1 539.8-319.1z" opacity=".6" /><path d="m420.2 976.3 539.8 319.1v-564.5-650.3z" opacity=".45" /><path d="m960 80.6v650.3 564.5l539.8-319.1z" opacity=".8" /><path d="m420.2 1078.7 539.8 760.7v-441.8z" opacity=".45" /><path d="m960 1397.6v441.8l540.2-760.7z" opacity=".8" /></svg>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-2xl font-bold">1.21 ETH</div>
@@ -68,7 +68,7 @@ export default function DashboardPage() {
                                     <CardTitle>
                                         Polygon Mumbai
                                     </CardTitle>
-                                    <svg className="h-5 w-5 text-muted-foreground" enable-background="new 0 0 1920 1920" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="m960 730.9-539.8 245.4 539.8 319.1 539.8-319.1z" opacity=".6" /><path d="m420.2 976.3 539.8 319.1v-564.5-650.3z" opacity=".45" /><path d="m960 80.6v650.3 564.5l539.8-319.1z" opacity=".8" /><path d="m420.2 1078.7 539.8 760.7v-441.8z" opacity=".45" /><path d="m960 1397.6v441.8l540.2-760.7z" opacity=".8" /></svg>
+                                    <svg className="h-5 w-5 text-muted-foreground" enableBackground="new 0 0 1920 1920" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="m960 730.9-539.8 245.4 539.8 319.1 539.8-319.1z" opacity=".6" /><path d="m420.2 976.3 539.8 319.1v-564.5-650.3z" opacity=".45" /><path d="m960 80.6v650.3 564.5l539.8-319.1z" opacity=".8" /><path d="m420.2 1078.7 539.8 760.7v-441.8z" opacity=".45" /><path d="m960 1397.6v441.8l540.2-760.7z" opacity=".8" /></svg>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="text-2xl font-bold">0.42 ETH</div>
