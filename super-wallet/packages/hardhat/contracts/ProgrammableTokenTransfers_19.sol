@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.20;
+pragma solidity 0.8.19;
 
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
@@ -7,7 +7,6 @@ import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.s
 import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -101,19 +100,22 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     /// @param _destinationChainSelector The selector of the destination chain to be whitelisted.
     function whitelistDestinationChain(
         uint64 _destinationChainSelector
-    ) external onlyOwner {
+    ) public onlyOwner {
         whitelistedDestinationChains[_destinationChainSelector] = true;
     }
 
     /// @dev Whitelists a receiver for transactions.
-    function addReceiver(
+    function whitelistReceiver(
         uint64 _destinationChainSelector,
         address receiverAddressOnDestinationChain
     ) external onlyOwner {
         destinationChainsReceivers[_destinationChainSelector] = receiverAddressOnDestinationChain;
+        whitelistSourceChain(_destinationChainSelector);
+        whitelistDestinationChain(_destinationChainSelector);
+        whitelistSender(receiverAddressOnDestinationChain);
     }
 
-    function readReceiver(
+    function getReceiver(
         uint64 _destinationChainSelector
     ) external view onlyOwner returns (address) {
         return destinationChainsReceivers[_destinationChainSelector];
@@ -133,7 +135,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     /// @param _sourceChainSelector The selector of the source chain to be whitelisted.
     function whitelistSourceChain(
         uint64 _sourceChainSelector
-    ) external onlyOwner {
+    ) public onlyOwner {
         whitelistedSourceChains[_sourceChainSelector] = true;
     }
 
@@ -149,7 +151,7 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     /// @dev Whitelists a sender.
     /// @notice This function can only be called by the owner.
     /// @param _sender The address of the sender.
-    function whitelistSender(address _sender) external onlyOwner {
+    function whitelistSender(address _sender) public onlyOwner {
         whitelistedSenders[_sender] = true;
     }
 
@@ -234,14 +236,31 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     onlyOwner
     onlyWhitelistedDestinationChain(_destinationChainSelector)
     returns (bytes32 messageId){
-        string memory _text = Strings.toHexString(uint160(msg.sender), 20);
+        //string memory _text = Strings.toHexString(uint160(msg.sender), 20);
+        string memory _text = toAsciiString(msg.sender);
 
         address _receiver = destinationChainsReceivers[_destinationChainSelector];
         // Ensure the receiver address is not the zero address
         require(_receiver != address(0),
-            string(abi.encodePacked("Receiver address on chain ", Strings.toString(uint256(_destinationChainSelector)),
-                " is not set")));
+            string(abi.encodePacked("Receiver address on chain is not set")));
         return sendMessagePayLINK(_destinationChainSelector, _receiver, _text, _token, _amount);
+    }
+
+    function toAsciiString(address x) internal pure returns (string memory) {
+        bytes memory s = new bytes(40);
+        for (uint i = 0; i < 20; i++) {
+            bytes1 b = bytes1(uint8(uint(uint160(x)) / (2**(8*(19 - i)))));
+            bytes1 hi = bytes1(uint8(b) / 16);
+            bytes1 lo = bytes1(uint8(b) - 16 * uint8(hi));
+            s[2*i] = char(hi);
+            s[2*i+1] = char(lo);
+        }
+        return string(s);
+    }
+
+    function char(bytes1 b) internal pure returns (bytes1 c) {
+        if (uint8(b) < 10) return bytes1(uint8(b) + 0x30);
+        else return bytes1(uint8(b) + 0x57);
     }
 
 
