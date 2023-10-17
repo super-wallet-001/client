@@ -97,7 +97,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
             })
 
             let biconomySmartAccount = await BiconomySmartAccountV2.create({
-                chainId: ChainId.BASE_GOERLI_TESTNET,
+                chainId: ChainId.POLYGON_MUMBAI,
                 bundler: mumbaiBundler,
                 paymaster: mumbaiPaymaster,
                 entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,

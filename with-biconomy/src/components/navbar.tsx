@@ -34,7 +34,7 @@ export default function Navbar() {
                     href={"/"}
                 >
                     <h1 className={cn("hidden md:block text-xl md:text-3xl font-bold text-primary", font.className)}>
-                        superwallet
+                        superwallet.
                     </h1>
                 </Link>
             </div>
