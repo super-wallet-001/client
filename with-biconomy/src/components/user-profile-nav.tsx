@@ -27,9 +27,7 @@ export default function UserProfileNav() {
         if (!mainAddress) {
             return;
         }
-
         navigator.clipboard.writeText(mainAddress);
-
         toast({
             description: "Address copied to clipboard",
         });

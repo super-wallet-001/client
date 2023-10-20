@@ -11,12 +11,13 @@ import {
     BiconomyPaymaster,
 } from '@biconomy/paymaster'
 import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules";
+import { MultiChainValidationModule, DEFAULT_MULTICHAIN_MODULE } from "@biconomy-devx/modules";
 import { ethers } from "ethers";
 
 interface State {
     mainAddress: string;
     scwLoading: boolean;
-    smartAccount: BiconomySmartAccountV2 | null;
+    smartAccounts: BiconomySmartAccountV2[] | null;
     provider: ethers.providers.Provider | null;
     particle: ParticleAuthModule.ParticleNetwork;
     connect: () => Promise<void>;
@@ -35,22 +36,22 @@ export function StateContextProvider({ children }: StateProviderProps) {
 
     const [address, setAddress] = useState<string>("")
     const [scwLoading, setScwLoading] = useState<boolean>(false);
-    const [smartAccount, setSmartAccount] = useState<BiconomySmartAccountV2 | null>(null);
+    const [smartAccounts, setSmartAccounts] = useState<BiconomySmartAccountV2[] | null>(null);
     const [provider, setProvider] = useState<ethers.providers.Provider | null>(null)
 
-    function saveStateToLocalStorage(address: string, smartAccount: BiconomySmartAccountV2, provider: ethers.providers.Provider) {
+    function saveStateToLocalStorage(address: string, smartAccounts: BiconomySmartAccountV2[], provider: ethers.providers.Provider) {
         const stateToSave = {
             mainAddress: address,
-            smartAccount,
+            smartAccounts,
             provider,
         };
         localStorage.setItem('appState', JSON.stringify(stateToSave));
     };
 
-    function removeFromLocalStorage(){
+    function removeFromLocalStorage() {
         localStorage.removeItem('appState');
         setAddress("");
-        setSmartAccount(null);
+        setSmartAccounts(null);
         setProvider(null);
     }
 
@@ -59,7 +60,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
         if (savedState) {
             const parsedState = JSON.parse(savedState);
             setAddress(parsedState.mainAddress);
-            setSmartAccount(parsedState.smartAccount);
+            setSmartAccounts(parsedState.smartAccounts);
             setProvider(parsedState.provider);
         }
     };
@@ -68,6 +69,8 @@ export function StateContextProvider({ children }: StateProviderProps) {
         loadStateFromLocalStorage();
     }, []);
 
+
+    //////////////////////////////////////////Biconomy Setup//////////////////////////////////////////////////////////
     const particle = new ParticleAuthModule.ParticleNetwork({
         projectId: process.env.NEXT_PUBLIC_PARTICLE_PROJECT_ID as string,
         clientKey: process.env.NEXT_PUBLIC_PARTICLE_CLIENT_ID as string,
@@ -79,15 +82,28 @@ export function StateContextProvider({ children }: StateProviderProps) {
     });
 
     const mumbaiBundler: IBundler = new Bundler({
-        bundlerUrl: process.env.NEXT_PUBLIC_BICONOMY_BUNDLER as string,
-        chainId: ChainId.BASE_GOERLI_TESTNET,
+        bundlerUrl: process.env.NEXT_PUBLIC_POLYGON_BICONOMY_BUNDLER as string,
+        chainId: ChainId.POLYGON_MUMBAI,
         entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
     })
 
     const mumbaiPaymaster: IPaymaster = new BiconomyPaymaster({
-        paymasterUrl: process.env.NEXT_PUBLIC_BICONOMY_PAYMASTER as string,
+        paymasterUrl: process.env.NEXT_PUBLIC_POLYGON_BICONOMY_PAYMASTER as string,
     })
 
+    const avalancheBunldler: IBundler = new Bundler({
+        bundlerUrl: process.env.NEXT_PUBLIC_AVALANCHE_BICONOMY_BUNDLER as string,
+        chainId: ChainId.AVALANCHE_TESTNET,
+        entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
+    })
+
+    const avalanchePaymaster: IPaymaster = new BiconomyPaymaster({
+        paymasterUrl: process.env.NEXT_PUBLIC_AVALANCHE_BICONOMY_PAYMASTER as string,
+    })
+    //////////////////////////////////////////Biconomy Setup//////////////////////////////////////////////////////////
+
+
+    /////////////////////////////////////////Connect Wallet///////////////////////////////////////////////////////////
     async function connect() {
         try {
             setScwLoading(true)
@@ -104,19 +120,48 @@ export function StateContextProvider({ children }: StateProviderProps) {
                 moduleAddress: DEFAULT_ECDSA_OWNERSHIP_MODULE
             })
 
-            let biconomySmartAccount = await BiconomySmartAccountV2.create({
-                chainId: ChainId.POLYGON_MUMBAI,
-                bundler: mumbaiBundler,
-                paymaster: mumbaiPaymaster,
-                entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
-                defaultValidationModule: module,
-                activeValidationModule: module
+
+            const multiChainModule = await MultiChainValidationModule.create({
+                signer: web3Provider.getSigner(),
+                moduleAddress: DEFAULT_MULTICHAIN_MODULE
             })
-            const walletAddress = await biconomySmartAccount.getAccountAddress()
-            setAddress(walletAddress);
-            setSmartAccount(biconomySmartAccount);
+
+            // For polygon mumbai
+            const biconomySmartAccountConfigMumabi = {
+                signer: web3Provider.getSigner(),
+                chainId: ChainId.POLYGON_MUMBAI,
+                paymaster: mumbaiPaymaster,
+                bundler: mumbaiBundler,
+                entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
+                defaultValidationModule: multiChainModule,
+                activeValidationModule: multiChainModule
+            };
+
+            // For biconomy
+            const biconomySmartAccountConfigAvalanche = {
+                signer: web3Provider.getSigner(),
+                chainId: ChainId.AVALANCHE_TESTNET,
+                paymaster: avalanchePaymaster,
+                bundler: avalancheBunldler,
+                entryPointAddress: DEFAULT_ENTRYPOINT_ADDRESS,
+                defaultValidationModule: multiChainModule,
+                activeValidationModule: multiChainModule
+            };
+
+
+            let biconomySmartAccountMumabi = await BiconomySmartAccountV2.create(biconomySmartAccountConfigMumabi)
+
+            let biconomySmartAccountAvalanche = await BiconomySmartAccountV2.create(biconomySmartAccountConfigAvalanche)
+
+            const walletAddressMumbai = await biconomySmartAccountMumabi.getAccountAddress()
+            const walletAddressAvalanche = await biconomySmartAccountAvalanche.getAccountAddress()
+            console.log(walletAddressMumbai,walletAddressAvalanche);
+            
+            setAddress(walletAddressMumbai);
+            setSmartAccounts([biconomySmartAccountMumabi,biconomySmartAccountAvalanche]);
             setScwLoading(false);
-            saveStateToLocalStorage(walletAddress, biconomySmartAccount, web3Provider);
+            saveStateToLocalStorage(walletAddressMumbai, [biconomySmartAccountMumabi,biconomySmartAccountAvalanche], web3Provider);
+
         } catch (error) {
             console.error("[ERROR_WHILE_CREATING_SMART_ACCOUNT]: ", error);
         }
@@ -128,7 +173,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
             value={{
                 mainAddress: address,
                 scwLoading,
-                smartAccount,
+                smartAccounts,
                 provider,
                 particle,
                 removeFromLocalStorage,
