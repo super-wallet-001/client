@@ -6,6 +6,7 @@ import { LayoutDashboard } from "lucide-react";
 import { useStateContext } from "@/context";
 import { Button } from "./ui/button";
 import { useRouter } from "next/router";
+import UserProfileNav from "./user-profile-nav";
 
 const font = Poppins({
     weight: "600",
@@ -23,11 +24,16 @@ const routes = [
 
 export default function Navbar() {
 
-    const { mainAddress } = useStateContext();
+    const { mainAddress, removeFromLocalStorage } = useStateContext();
     const router = useRouter();
 
+    function logout() {
+        removeFromLocalStorage();
+        router.push("/");
+    }
+
     return (
-        <div className="fixed w-full z-50 flex justify-between items-center py-2 px-4 border-b border-primary/10 bg-secondary/10 h-16">
+        <div className="fixed w-full z-50 flex justify-between items-center py-2 px-6 border-b border-primary/10 bg-secondary/10 h-16 bg-white dark:bg-black">
             <div className="flex items-center">
                 <MobileSidebar />
                 <Link
@@ -40,17 +46,7 @@ export default function Navbar() {
             </div>
             <div className="flex items-center gap-x-3">
                 {mainAddress && (
-                    <div className="hidden md:flex gap-6 pr-20">
-                        {
-                            routes.map((route) => {
-                                return (
-                                    <Button variant={"ghost"} onClick={() => router.push(route.href)}>
-                                        {route.label}
-                                    </Button>
-                                )
-                            })
-                        }
-                    </div>
+                    <UserProfileNav />
                 )}
             </div>
         </div>
