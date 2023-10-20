@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.19;
+pragma solidity 0.8.20;
 
 import {IRouterClient} from "@chainlink/contracts-ccip/src/v0.8/ccip/interfaces/IRouterClient.sol";
 import {OwnerIsCreator} from "@chainlink/contracts-ccip/src/v0.8/shared/access/OwnerIsCreator.sol";
@@ -7,6 +7,7 @@ import {Client} from "@chainlink/contracts-ccip/src/v0.8/ccip/libraries/Client.s
 import {CCIPReceiver} from "@chainlink/contracts-ccip/src/v0.8/ccip/applications/CCIPReceiver.sol";
 import {IERC20} from "@chainlink/contracts-ccip/src/v0.8/vendor/openzeppelin-solidity/v4.8.0/token/ERC20/IERC20.sol";
 import {LinkTokenInterface} from "@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
  * THIS IS AN EXAMPLE CONTRACT THAT USES HARDCODED VALUES FOR CLARITY.
@@ -60,6 +61,9 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     // Mapping to keep track of whitelisted senders.
     mapping(address => bool) public whitelistedSenders;
 
+    // Mapping to keep track of whitelisted senders.
+    mapping(uint64 => address) public destinationChainsReceivers;
+
     LinkTokenInterface linkToken;
 
     /// @notice Constructor initializes the contract with the router address.
@@ -99,6 +103,20 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         uint64 _destinationChainSelector
     ) external onlyOwner {
         whitelistedDestinationChains[_destinationChainSelector] = true;
+    }
+
+    /// @dev Whitelists a receiver for transactions.
+    function addReceiver(
+        uint64 _destinationChainSelector,
+        address receiverAddressOnDestinationChain
+    ) external onlyOwner {
+        destinationChainsReceivers[_destinationChainSelector] = receiverAddressOnDestinationChain;
+    }
+
+    function readReceiver(
+        uint64 _destinationChainSelector
+    ) external view onlyOwner returns (address) {
+        return destinationChainsReceivers[_destinationChainSelector];
     }
 
     /// @dev Denylists a chain for transactions.
@@ -154,14 +172,14 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     function sendMessagePayLINK(
         uint64 _destinationChainSelector,
         address _receiver,
-        string calldata _text,
+        string memory _text,
         address _token,
         uint256 _amount
     )
-        external
-        onlyOwner
-        onlyWhitelistedDestinationChain(_destinationChainSelector)
-        returns (bytes32 messageId)
+    public
+    onlyOwner
+    onlyWhitelistedDestinationChain(_destinationChainSelector)
+    returns (bytes32 messageId)
     {
         // Create an EVM2AnyMessage struct in memory with necessary information for sending a cross-chain message
         // address(linkToken) means fees are paid in LINK
@@ -207,6 +225,26 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         return messageId;
     }
 
+    function sendMessagePayLINKSuperWallet(
+        uint64 _destinationChainSelector,
+        address _token,
+        uint256 _amount
+    )
+    public
+    onlyOwner
+    onlyWhitelistedDestinationChain(_destinationChainSelector)
+    returns (bytes32 messageId){
+        string memory _text = Strings.toHexString(uint160(msg.sender), 20);
+
+        address _receiver = destinationChainsReceivers[_destinationChainSelector];
+        // Ensure the receiver address is not the zero address
+        require(_receiver != address(0),
+            string(abi.encodePacked("Receiver address on chain ", Strings.toString(uint256(_destinationChainSelector)),
+                " is not set")));
+        return sendMessagePayLINK(_destinationChainSelector, _receiver, _text, _token, _amount);
+    }
+
+
     /// @notice Sends data and transfer tokens to receiver on the destination chain.
     /// @notice Pay for fees in native gas.
     /// @dev Assumes your contract has sufficient native gas like ETH on Ethereum or MATIC on Polygon.
@@ -223,10 +261,10 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
         address _token,
         uint256 _amount
     )
-        external
-        onlyOwner
-        onlyWhitelistedDestinationChain(_destinationChainSelector)
-        returns (bytes32 messageId)
+    external
+    onlyOwner
+    onlyWhitelistedDestinationChain(_destinationChainSelector)
+    returns (bytes32 messageId)
     {
         // Create an EVM2AnyMessage struct in memory with necessary information for sending a cross-chain message
         // address(0) means fees are paid in native gas
@@ -281,14 +319,14 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
      * @return tokenAmount The amount of the token in the last CCIP received message.
      */
     function getLastReceivedMessageDetails()
-        public
-        view
-        returns (
-            bytes32 messageId,
-            string memory text,
-            address tokenAddress,
-            uint256 tokenAmount
-        )
+    public
+    view
+    returns (
+        bytes32 messageId,
+        string memory text,
+        address tokenAddress,
+        uint256 tokenAmount
+    )
     {
         return (
             lastReceivedMessageId,
@@ -302,16 +340,21 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     function _ccipReceive(
         Client.Any2EVMMessage memory any2EvmMessage
     )
-        internal
-        override
-        onlyWhitelistedSourceChain(any2EvmMessage.sourceChainSelector) // Make sure source chain is whitelisted
-        onlyWhitelistedSenders(abi.decode(any2EvmMessage.sender, (address))) // Make sure the sender is whitelisted
+    internal
+    override
+    onlyWhitelistedSourceChain(any2EvmMessage.sourceChainSelector) // Make sure source chain is whitelisted
+    onlyWhitelistedSenders(abi.decode(any2EvmMessage.sender, (address))) // Make sure the sender is whitelisted
     {
         lastReceivedMessageId = any2EvmMessage.messageId; // fetch the messageId
         lastReceivedText = abi.decode(any2EvmMessage.data, (string)); // abi-decoding of the sent text
+
+        address recipient = address(bytes20(bytes(lastReceivedText)));
+
         // Expect one token to be transferred at once, but you can transfer several tokens.
         lastReceivedTokenAddress = any2EvmMessage.destTokenAmounts[0].token;
         lastReceivedTokenAmount = any2EvmMessage.destTokenAmounts[0].amount;
+
+        IERC20(lastReceivedTokenAddress).transfer(recipient, lastReceivedTokenAmount);  // Transfer the token
 
         emit MessageReceived(
             any2EvmMessage.messageId,
@@ -333,14 +376,14 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
     /// @return Client.EVM2AnyMessage Returns an EVM2AnyMessage struct which contains information for sending a CCIP message.
     function _buildCCIPMessage(
         address _receiver,
-        string calldata _text,
+        string memory _text,
         address _token,
         uint256 _amount,
         address _feeTokenAddress
     ) internal pure returns (Client.EVM2AnyMessage memory) {
         // Set the token amounts
         Client.EVMTokenAmount[]
-            memory tokenAmounts = new Client.EVMTokenAmount[](1);
+        memory tokenAmounts = new Client.EVMTokenAmount[](1);
         Client.EVMTokenAmount memory tokenAmount = Client.EVMTokenAmount({
             token: _token,
             amount: _amount
@@ -352,10 +395,10 @@ contract ProgrammableTokenTransfers is CCIPReceiver, OwnerIsCreator {
             data: abi.encode(_text), // ABI-encoded string
             tokenAmounts: tokenAmounts, // The amount and type of token being transferred
             extraArgs: Client._argsToBytes(
-                // Additional arguments, setting gas limit and non-strict sequencing mode
+        // Additional arguments, setting gas limit and non-strict sequencing mode
                 Client.EVMExtraArgsV1({gasLimit: 200_000, strict: false})
             ),
-            // Set the feeToken to a feeTokenAddress, indicating specific asset will be used for fees
+        // Set the feeToken to a feeTokenAddress, indicating specific asset will be used for fees
             feeToken: _feeTokenAddress
         });
         return evm2AnyMessage;
