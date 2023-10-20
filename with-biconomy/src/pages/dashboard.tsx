@@ -1,12 +1,41 @@
+"use client";
 import RecentTransections from "@/components/recent-transections";
 import SendTransection from "@/components/send";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useStateContext } from "@/context";
+import { getETHBalance } from "@/lib/getETHBalance";
 import Image from "next/image";
+import { use, useEffect, useState } from "react";
 
 export default function DashboardPage() {
+
+    const { mainAddress } = useStateContext();
+    const [scrollBalance, setScrollBalance] = useState("0.0");
+    const [mantleBalance, setMantlebalance] = useState("0.0");
+    const [maticBalance, setMaticBalance] = useState("0.0");
+    const [avalancheBalance, setAvalancheBalance] = useState("0.0");
+
+    useEffect(()=>{
+        if(mainAddress){
+            getETHBalance(534351,mainAddress).then((balance) => {
+                setScrollBalance(parseFloat(balance).toFixed(2));
+            })
+            getETHBalance(80001,mainAddress).then((balance) => {
+                setMaticBalance(parseFloat(balance).toFixed(2));
+            })
+            getETHBalance(43114,mainAddress).then((balance) => {
+                setAvalancheBalance(parseFloat(balance).toFixed(2));
+            })
+            getETHBalance(5001,mainAddress).then((balance) => {
+                setMantlebalance(parseFloat(balance).toFixed(2));
+            })
+        }
+    
+    })
+
     return (
         <div className="pt-16 h-full">
             <div className="flex-1 space-y-4 p-8 pt-6">
@@ -43,24 +72,18 @@ export default function DashboardPage() {
                                     <img src="scroll.png" className="absolute top-3 right-[1px] h-10 w-20 text-muted-foreground" />
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">0.65 ETH</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        Comming soon...
-                                    </p>
+                                    <div className="text-2xl font-bold">{mainAddress && `${scrollBalance} ETH`}</div>
                                 </CardContent>
                             </Card>
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                     <CardTitle>
-                                        ETH Sepolia
+                                        Mantle Testnet
                                     </CardTitle>
                                     <svg className="h-5 w-5 text-muted-foreground" enableBackground="new 0 0 1920 1920" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="m960 730.9-539.8 245.4 539.8 319.1 539.8-319.1z" opacity=".6" /><path d="m420.2 976.3 539.8 319.1v-564.5-650.3z" opacity=".45" /><path d="m960 80.6v650.3 564.5l539.8-319.1z" opacity=".8" /><path d="m420.2 1078.7 539.8 760.7v-441.8z" opacity=".45" /><path d="m960 1397.6v441.8l540.2-760.7z" opacity=".8" /></svg>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">1.21 ETH</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        +20.1% from last month
-                                    </p>
+                                    <div className="text-2xl font-bold">{mainAddress && `${mantleBalance} ETH`}</div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -71,10 +94,7 @@ export default function DashboardPage() {
                                     <svg className="h-5 w-5 text-muted-foreground" enableBackground="new 0 0 1920 1920" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg"><path d="m960 730.9-539.8 245.4 539.8 319.1 539.8-319.1z" opacity=".6" /><path d="m420.2 976.3 539.8 319.1v-564.5-650.3z" opacity=".45" /><path d="m960 80.6v650.3 564.5l539.8-319.1z" opacity=".8" /><path d="m420.2 1078.7 539.8 760.7v-441.8z" opacity=".45" /><path d="m960 1397.6v441.8l540.2-760.7z" opacity=".8" /></svg>
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">0.42 ETH</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        +20.1% from last month
-                                    </p>
+                                    <div className="text-2xl font-bold">{mainAddress && `${maticBalance} MATIC`}</div>
                                 </CardContent>
                             </Card>
                             <Card>
@@ -89,10 +109,7 @@ export default function DashboardPage() {
 
                                 </CardHeader>
                                 <CardContent>
-                                    <div className="text-2xl font-bold">0.20 ETH</div>
-                                    <p className="text-xs text-muted-foreground">
-                                        +20.1% from last month
-                                    </p>
+                                    <div className="text-2xl font-bold">{mainAddress && `${scrollBalance} AVAX`}</div>
                                 </CardContent>
                             </Card>
                         </div>

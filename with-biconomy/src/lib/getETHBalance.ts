@@ -20,7 +20,13 @@ export async function getETHBalance(chainId: number, walletAddress: string) {
             break;
         case 5001:
             provider = new ethers.providers.JsonRpcProvider(mantleProvider);
+            break;
         default:
             throw new Error("Invalid ChainID");
     }
+    
+    const balance = ethers.utils.formatEther((await provider.getBalance(walletAddress)));
+    return balance;
 }
+
+getETHBalance(80001,"0x4BF20785a0B2E6a375B1d49Ba64c6145AC50AAD6");

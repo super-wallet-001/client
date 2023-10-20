@@ -20,6 +20,7 @@ interface State {
     provider: ethers.providers.Provider | null;
     particle: ParticleAuthModule.ParticleNetwork;
     connect: () => Promise<void>;
+    removeFromLocalStorage: () => void;
 }
 
 
@@ -45,6 +46,13 @@ export function StateContextProvider({ children }: StateProviderProps) {
         };
         localStorage.setItem('appState', JSON.stringify(stateToSave));
     };
+
+    function removeFromLocalStorage(){
+        localStorage.removeItem('appState');
+        setAddress("");
+        setSmartAccount(null);
+        setProvider(null);
+    }
 
     function loadStateFromLocalStorage() {
         const savedState = localStorage.getItem('appState');
@@ -123,6 +131,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
                 smartAccount,
                 provider,
                 particle,
+                removeFromLocalStorage,
                 connect
             }}
         >
