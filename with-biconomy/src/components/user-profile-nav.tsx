@@ -8,6 +8,7 @@ import { useStateContext } from "@/context";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import Link from "next/link";
 import { useToast } from "./ui/use-toast";
+import { useRouter } from "next/router";
 
 
 type Props = {
@@ -18,11 +19,12 @@ export default function UserProfileNav() {
 
     const { mainAddress, removeFromLocalStorage } = useStateContext();
     const {toast}=useToast();
+    const router = useRouter();
 
     function logout() {
         removeFromLocalStorage();
+        router.push("/");
     }
-
     function copyToClipboard() {
         if (!mainAddress) {
             return;

@@ -6,11 +6,13 @@ import { useRouter } from "next/router";
 
 export default function Heading() {
 
-    const { connect } = useStateContext();
+    const { connect,mainAddress } = useStateContext();
     const router = useRouter();
 
     async function connectAndNavigate() {
-        await connect();
+        if(!mainAddress){
+            await connect();
+        }
         router.push("/dashboard");
     }
 
