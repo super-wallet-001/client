@@ -1,3 +1,4 @@
+import { useStateContext } from "@/context";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
@@ -6,6 +7,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Separator } from "./ui/separator";
 
 export default function SendTransection() {
+
+    const {walletBalances}=useStateContext();
+
     return (
         <Card>
             <CardHeader>
@@ -39,6 +43,9 @@ export default function SendTransection() {
                 <div className="grid gap-2">
                     <Label htmlFor="amount">Amount</Label>
                     <Input id="amount" placeholder="Amount in ETH" />
+                    <div className="text-lg text-muted-foreground">
+                        
+                    </div>
                 </div>
             </CardContent>
 
