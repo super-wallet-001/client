@@ -7,6 +7,7 @@ import { useStateContext } from "@/context";
 import { Button } from "./ui/button";
 import { useRouter } from "next/router";
 import UserProfileNav from "./user-profile-nav";
+import { ModeToggle } from "./mode-toggle";
 
 const font = Poppins({
     weight: "600",
@@ -24,13 +25,8 @@ const routes = [
 
 export default function Navbar() {
 
-    const { mainAddress, removeFromLocalStorage } = useStateContext();
-    const router = useRouter();
-
-    function logout() {
-        removeFromLocalStorage();
-        router.push("/");
-    }
+    const { mainAddress } = useStateContext();
+    
 
     return (
         <div className="fixed w-full z-50 flex justify-between items-center py-2 px-6 border-b border-primary/10 bg-secondary/10 h-16 bg-white dark:bg-black">
@@ -48,6 +44,7 @@ export default function Navbar() {
                 {mainAddress && (
                     <UserProfileNav />
                 )}
+                <ModeToggle/>
             </div>
         </div>
     )

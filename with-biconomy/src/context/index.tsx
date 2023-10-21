@@ -252,8 +252,6 @@ export function StateContextProvider({ children }: StateProviderProps) {
     const avalanchePaymaster_ =
         biconomySmartAccountAvalanche.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
 
-  
-    
     // Mumbai Paymaster
     const mumbaiPaymaster_ =
         biconomySmartAccountConfigMumabi.paymaster as IHybridPaymaster<SponsorUserOperationDto>;

@@ -314,7 +314,7 @@ export default function SendTransection() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-center gap-8 space-x-2">
-            <Button className="w-full" >Submit</Button>
+            <Button className="w-full text-lg font-medium" >Submit</Button>
           </CardFooter>
         </Card>
       </form>
