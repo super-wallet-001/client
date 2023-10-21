@@ -9,11 +9,15 @@ import { ChainId } from "@biconomy/core-types"
 import {
   IPaymaster,
   BiconomyPaymaster,
+  IHybridPaymaster,
+  SponsorUserOperationDto,
+  PaymasterMode,
 } from '@biconomy/paymaster'
 import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules";
 import { MultiChainValidationModule, DEFAULT_MULTICHAIN_MODULE } from "@biconomy-devx/modules";
 import { ethers } from "ethers";
 import { getWalletBalance } from "@/lib/getWalletbalance";
+import { useToast } from "@/components/ui/use-toast";
 
 interface State {
   mainAddress: string | null;
@@ -60,6 +64,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
   const [smartAccounts, setSmartAccounts] = useState<BiconomySmartAccountV2[] | null>(null);
   const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
   const [walletBalances, setWalletBalances] = useState<WalletBalances | null>(null);
+  const {toast}=useToast();
 
   function saveStateToLocalStorage(address: string, smartAccounts: BiconomySmartAccountV2[], provider: ethers.providers.Provider, balances: WalletBalances) {
     const stateToSave = {
@@ -233,13 +238,28 @@ export function StateContextProvider({ children }: StateProviderProps) {
 
     let biconomySmartAccountMumbai = await BiconomySmartAccountV2.create(biconomySmartAccountConfigMumabi)
 
-    let biconomySmartAccountAvalanche = await BiconomySmartAccountV2.create(biconomySmartAccountConfigAvalanche)
+    let biconomySmartAccountAvalanche = await BiconomySmartAccountV2.create(biconomySmartAccountConfigAvalanche);
 
-    // if (smartAccounts) {
+    let paymasterServiceData: SponsorUserOperationDto = {
+      mode: PaymasterMode.SPONSORED,
+      smartAccountInfo: {
+        name: 'BICONOMY',
+        version: '2.0.0'
+      },
+    };
+
+    // Avalanche paymaster
+    const avalanchePaymaster_ =
+        biconomySmartAccountAvalanche.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+
+  
+    
+    // Mumbai Paymaster
+    const mumbaiPaymaster_ =
+        biconomySmartAccountConfigMumabi.paymaster as IHybridPaymaster<SponsorUserOperationDto>;
+
+
     // First approve the sender smart contract to use the tokens
-    // const avalancheSCW = smartAccounts[1];
-    // console.log(await avalancheSCW.getAccountAddress());
-
     const erc20Interface = new ethers.utils.Interface([
       "function approve(address spender, uint256 value)",
     ])
@@ -251,7 +271,12 @@ export function StateContextProvider({ children }: StateProviderProps) {
       to: "0x57F1c63497AEe0bE305B8852b354CEc793da43bB",
       data: avalancheData1
     }
-    const avalanchePartialUserOp1 = await biconomySmartAccountAvalanche.buildUserOp([avalanceTransection1]);
+    let avalanchePartialUserOp1 = await biconomySmartAccountAvalanche.buildUserOp([avalanceTransection1]);
+    const userOp1PaymasterDataResponse=await avalanchePaymaster_.getPaymasterAndData(
+      avalanchePartialUserOp1,
+      paymasterServiceData
+    );
+    avalanchePartialUserOp1.paymasterAndData=userOp1PaymasterDataResponse.paymasterAndData;
 
     // Call send from source chain (Avalanche)
     const senderInterface = new ethers.utils.Interface([
@@ -267,9 +292,12 @@ export function StateContextProvider({ children }: StateProviderProps) {
       to: "0xaa38f1eB37C111B4048c19670CBe53081fE058b7",
       data: avalancheData2
     };
-    const avalanchePartialUserOp2 = await biconomySmartAccountAvalanche.buildUserOp([avalancheTransection2]);
-
-    console.log(avalanchePartialUserOp1,avalanchePartialUserOp2);
+    let avalanchePartialUserOp2 = await biconomySmartAccountAvalanche.buildUserOp([avalancheTransection2]);
+    const userOp2PaymasterDataResponse=await avalanchePaymaster_.getPaymasterAndData(
+      avalanchePartialUserOp2,
+      paymasterServiceData
+    );
+    avalanchePartialUserOp2.paymasterAndData=userOp2PaymasterDataResponse.paymasterAndData;
 
     // From the smart contract wallet send the tokens to address.
     
@@ -284,15 +312,21 @@ export function StateContextProvider({ children }: StateProviderProps) {
       to: "0x2c852e740B62308c46DD29B982FBb650D063Bd07",
       data: mumabiData1
     }
-    const mumbaiPartialUserOp = await biconomySmartAccountMumbai.buildUserOp([mumabiTransection1])
+    let mumbaiPartialUserOp = await biconomySmartAccountMumbai.buildUserOp([mumabiTransection1])
+    const userOp3PaymasterDataResponse=await mumbaiPaymaster_.getPaymasterAndData(
+      mumbaiPartialUserOp,
+      paymasterServiceData
+    );
+    mumbaiPartialUserOp.paymasterAndData=userOp3PaymasterDataResponse.paymasterAndData;
 
     // Get the transection signed
-
-
     const signedUserOps = await multiChainModule.signUserOps([{ userOp: avalanchePartialUserOp1, chainId: 43114 }, { userOp: avalanchePartialUserOp2, chainId: 43114 }, { userOp: mumbaiPartialUserOp, chainId: 80001 }])
-    // const signedUserOps = await multiChainModule.signUserOps([{ userOp: avalanchePartialUserOp1, chainId: 43114 }, { userOp: mumbaiPartialUserOp, chainId: 80001 }])
 
     console.log(signedUserOps);
+  
+    toast({
+      title:"Executing the transection..."
+    })
 
     // Send all the transections
     try {
@@ -302,6 +336,9 @@ export function StateContextProvider({ children }: StateProviderProps) {
     } catch (e) {
       console.log("error received ", e);
     }
+    toast({
+      title:"Approved the sender smart contract!"
+    })
 
     try {
       const userOpResponse2 = await biconomySmartAccountAvalanche.sendSignedUserOp(signedUserOps[1] as any);
@@ -310,6 +347,9 @@ export function StateContextProvider({ children }: StateProviderProps) {
     } catch (e) {
       console.log("error received ", e);
     }
+    toast({
+      title:"Transfering the tokens to Polygon Mumbai!"
+    })
 
     // Wait for 2 minutes by default in any case
     await new Promise(resolve => setTimeout(resolve, 120000));
