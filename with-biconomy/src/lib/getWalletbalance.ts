@@ -1,33 +1,10 @@
 import { ethers } from "ethers";
+import { ERC20ABI } from "./constants";
 
 const scrollProvider = "https://sepolia-rpc.scroll.io"
 const mantleProvider = "https://rpc.testnet.mantle.xyz"
 const polygonMumbaiProvider = `https://polygon-mumbai.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
 const avalancheProvider = "https://api.avax-test.network/ext/bc/C/rpc"
-
-const ERC20ABI = [
-    {
-        inputs: [
-            {
-                internalType: 'address',
-                name: 'account',
-                type: 'address',
-            },
-        ],
-        name: 'balanceOf',
-        outputs: [
-            {
-                internalType: 'uint256',
-                name: '',
-                type: 'uint256',
-            },
-        ],
-        stateMutability: 'view',
-        type: 'function',
-    },
-];
-
-
 
 export async function getWalletBalance(walletAddress: string): Promise<any> {
     const scrollProvider_ = new ethers.providers.JsonRpcProvider(scrollProvider);

@@ -15,7 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 
 export default function SendTransection() {
 
-  const { walletBalances } = useStateContext();
+  const { walletBalances,executeSendToken} = useStateContext();
   const { toast } = useToast();
 
   // const formSchema = z.object({
@@ -75,10 +75,20 @@ export default function SendTransection() {
 
   async function handleOnSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
-    toast({
-      title: "Success",
-      description: "Transaction sent successfully!",
-    })
+    try{
+      await executeSendToken(data.receiverAddress,data.receiversChain,data.token,parseInt(data.tokenFromChains.avalanche),parseInt(data.amount));
+      toast({
+        title: "Success",
+        description: "Transaction sent successfully!",
+      })
+    }catch(error){
+      console.log('[ERROR_WHILE_EXECUTING_THE_MULTICHAIN_TRANSECTION]: ',error);
+      toast({
+        variant:"destructive",
+        title: "Error",
+        description: "There was some error while sending the multichain transection, try again later!",
+      })
+    }
   }
 
   return (
