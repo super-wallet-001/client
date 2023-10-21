@@ -28,7 +28,7 @@ export default function Heading() {
                     <TypewriterComponent
                         options={{
                             strings: [
-                                "Ethereum.",
+                                "Avalanche.",
                                 "Polygon.",
                                 "Scroll.",
                                 "Mantle.",
@@ -60,7 +60,7 @@ export default function Heading() {
                 </div>
             </div>
             <div className={cn("text-sm sm:text-md md:text-lg lg:text-xl font-light dark:text-zinc-400 text-black mb-6",)}>
-                Unlocking the Future of Finance: Seamlessly Transact Across Multiple Chains with a Click!
+                Seamlessly Transact Across Multiple Chains with a Single Click!
             </div>
             <div className="w-full flex justify-center">
                 <Button className="flex gap-2 md:text-lg p-4 md:p-6 rounded-full font-semibold" onClick={connectAndNavigate}>

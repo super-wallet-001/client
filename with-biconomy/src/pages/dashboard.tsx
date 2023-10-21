@@ -1,13 +1,10 @@
 "use client";
+import Defi from "@/components/defi";
+import NFTs from "@/components/nfts";
 import Portfolio from "@/components/portfolio";
-import RecentTransections from "@/components/recent-transections";
 import SendTransection from "@/components/send";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
-import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStateContext } from "@/context";
-import Image from "next/image";
 
 
 export default function DashboardPage() {
@@ -34,7 +31,7 @@ export default function DashboardPage() {
             <TabsTrigger value="nfts">
               NFTs
             </TabsTrigger>
-            <TabsTrigger value="notifications" disabled>
+            <TabsTrigger value="defi">
               Defi
             </TabsTrigger>
           </TabsList>
@@ -45,7 +42,10 @@ export default function DashboardPage() {
             <SendTransection />
           </TabsContent>
           <TabsContent value="nfts">
-            <SendTransection />
+            <NFTs />
+          </TabsContent>
+          <TabsContent value="defi">
+            <Defi />
           </TabsContent>
         </Tabs>
       </div>

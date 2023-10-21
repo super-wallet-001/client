@@ -108,7 +108,7 @@ export default function SendTransection() {
               render={({ field }) => {
                 return (
                   <FormItem className="grid gap-2 text-md">
-                    <FormLabel htmlFor="area">Receiver's Chain</FormLabel>
+                    <FormLabel htmlFor="area">Receiver&apos;s Chain</FormLabel>
                     <Select
                       onValueChange={field.onChange}
                       value={field.value}

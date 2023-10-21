@@ -145,7 +145,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
         "any"
       )
       setProvider(web3Provider)
-      const module = await ECDSAOwnershipValidationModule.create({
+      const module_ = await ECDSAOwnershipValidationModule.create({
         signer: web3Provider.getSigner(),
         moduleAddress: DEFAULT_ECDSA_OWNERSHIP_MODULE
       })
