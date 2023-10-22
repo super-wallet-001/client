@@ -7,15 +7,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import * as z from "zod";
 import { useToast } from "./ui/use-toast";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import { useState } from "react";
+import { Loader } from "lucide-react";
 
 
 
 export default function SendTransection() {
 
-  const { walletBalances,executeSendToken} = useStateContext();
+  const { walletBalances, executeSendToken } = useStateContext();
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   // const formSchema = z.object({
@@ -75,20 +78,22 @@ export default function SendTransection() {
 
   async function handleOnSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
-    try{
-      await executeSendToken(data.receiverAddress,data.receiversChain,data.token,parseInt(data.tokenFromChains.avalanche),parseInt(data.tokenFromChains.mumbai));
+    setIsLoading(true);
+    try {
+      await executeSendToken(data.receiverAddress, data.receiversChain, data.token, parseInt(data.tokenFromChains.avalanche), parseInt(data.tokenFromChains.mumbai));
       toast({
         title: "Success",
         description: "Transaction sent successfully!",
       })
-    }catch(error){
-      console.log('[ERROR_WHILE_EXECUTING_THE_MULTICHAIN_TRANSECTION]: ',error);
+    } catch (error) {
+      console.log('[ERROR_WHILE_EXECUTING_THE_MULTICHAIN_TRANSECTION]: ', error);
       toast({
-        variant:"destructive",
+        variant: "destructive",
         title: "Error",
         description: "There was some error while sending the multichain transection, try again later!",
       })
     }
+    setIsLoading(false);
   }
 
   return (
@@ -208,7 +213,7 @@ export default function SendTransection() {
                         {...field}
                         className="h-12"
                         id="amount"
-             
+
                         placeholder="Amount"
                       />
                       <FormMessage />
@@ -241,7 +246,7 @@ export default function SendTransection() {
                                   {...field}
                                   className="h-12"
                                   id="mumbaiAmount"
-                                 
+
                                   placeholder="Amount"
                                 />
                                 <FormMessage />
@@ -260,7 +265,7 @@ export default function SendTransection() {
                                   {...field}
                                   className="h-12"
                                   id="avalancheAmount"
-                               
+
                                   placeholder="Amount"
                                 />
                                 <FormMessage />
@@ -279,7 +284,7 @@ export default function SendTransection() {
                                   {...field}
                                   className="h-12"
                                   id="scrollAmount"
-                           
+
                                   placeholder="Amount"
                                 />
                                 <FormMessage />
@@ -298,7 +303,7 @@ export default function SendTransection() {
                                   {...field}
                                   className="h-12"
                                   id="mantleAmount"
-                           
+
                                   placeholder="Amount"
                                 />
                                 <FormMessage />
@@ -314,7 +319,14 @@ export default function SendTransection() {
             </div>
           </CardContent>
           <CardFooter className="flex justify-center gap-8 space-x-2">
-            <Button className="w-full text-lg font-medium" >Submit</Button>
+            <Button className="w-full text-lg font-medium" >
+              {isLoading && (
+                <Loader
+                  className="w-4 h-4 mr-2 animate-spin"
+                />
+              )}
+              Submit
+            </Button>
           </CardFooter>
         </Card>
       </form>
