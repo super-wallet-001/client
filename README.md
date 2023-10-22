@@ -79,3 +79,19 @@ Super Wallet is currently live on the following testnet networks:
 4. Mantle Testnet
 
 Feel free to explore and experiment with Super Wallet on these testnet networks.
+
+# Account Abstraction 
+
+We've significantly improved user experience by implementing account abstraction in Super Wallet. To achieve this, we're utilizing Biconomy's Account Abstraction SDK v2.
+
+The Super Wallet lets users to transfer and receive assets on multiple blockchain. However, a issue arises as simply sending ERC20 tokens to another chain, involves three transactions:
+
+1. First, there's a need to approve our Super Wallet bridge smart contract to utilize the tokens for transferring them to another chain.
+
+2. Next, you must trigger the send function on super wallet bridge contract to initiate the multi-chain transaction.
+
+3. Finally, on the recipient's end, when the tokens are received into the smart contract wallet on the recipient's chain, another transaction is required to transfer the tokens to the recipient.
+
+To put it simply, performing such a transfer conventionally would demand three different signatures on more than one chains, which is not very user-friendly. However, we have improved this user experience by integrating Biconomy's Multi-Chain Validator Module. This module creates a Merkle tree comprising multiple userOps across various chains and allows the user to sign that Merkle tree instead of handling individual transactions on each chain.
+
+This enhancement significantly streamlines the user experience, and the concept can be extended in Super Wallets to eventually enable more complex transactions with a single click. This eliminates a major user obstacle and simplifies the process to just signing one transaction, enabling seamless transactions across multiple chains. For more details about how the multichain validation takes place, refer to Biconomy's Multi-Chain Validator Module [here](https://forum.biconomy.io/t/biconomy-multichain-validator-module/509/2).
