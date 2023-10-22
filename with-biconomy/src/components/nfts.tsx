@@ -4,7 +4,7 @@ import { Button } from "./ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Network, Alchemy } from "alchemy-sdk";
 import { Loader } from "lucide-react";
 
@@ -26,12 +26,6 @@ export default function NFTs() {
         setNFT(nft)
         setLoading(false)
     }
-
-    useEffect(() => {
-        console.log(nft);
-    }, [nft]);
-
-
 
     return (
         <Card>
@@ -58,7 +52,7 @@ export default function NFTs() {
                         />
                     </div>
                     <div className="text-xl font-medium text-secondary-foreground">
-                        Nothing here...
+                        Nothing here
                     </div>
                     <Dialog>
                         <DialogTrigger asChild>
@@ -141,8 +135,6 @@ export default function NFTs() {
                     </Dialog>
                 </div>
             </CardContent>
-
         </Card >
-
     )
 }

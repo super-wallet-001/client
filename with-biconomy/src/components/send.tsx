@@ -76,7 +76,7 @@ export default function SendTransection() {
   async function handleOnSubmit(data: z.infer<typeof formSchema>) {
     console.log(data);
     try{
-      await executeSendToken(data.receiverAddress,data.receiversChain,data.token,parseInt(data.tokenFromChains.avalanche),parseInt(data.amount));
+      await executeSendToken(data.receiverAddress,data.receiversChain,data.token,parseInt(data.tokenFromChains.avalanche),parseInt(data.tokenFromChains.mumbai));
       toast({
         title: "Success",
         description: "Transaction sent successfully!",
