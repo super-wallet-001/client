@@ -269,7 +269,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
       "function approve(address spender, uint256 value)",
     ])
     const avalancheData1 = erc20Interface.encodeFunctionData("approve", [
-      "0xaa38f1eB37C111B4048c19670CBe53081fE058b7",
+      "0xA7a034e0e5958C4F1b9051597e715d13059866f8",
       amountToSendFromChain1
     ])
     const avalanceTransection1 = {
@@ -285,16 +285,16 @@ export function StateContextProvider({ children }: StateProviderProps) {
 
     // Call send from source chain (Avalanche)
     const senderInterface = new ethers.utils.Interface([
-      "function send(uint256 tokenAmount,address receiver,string memory chain,string memory tokenSymbol)"
+      "function send(string memory chain, string memory tokenSymbol, uint256 tokenAmount) external payable"
     ]);
     const avalancheData2 = senderInterface.encodeFunctionData("send", [
       amountToSendFromChain1,
-      "0x0e80c8688B221F3daDE5aCDdd8dB2dEcf553db83",
+      "0xA7a034e0e5958C4F1b9051597e715d13059866f8",
       "Polygon",
       "aUSDC"
     ]);
     const avalancheTransection2 = {
-      to: "0xaa38f1eB37C111B4048c19670CBe53081fE058b7",
+      to: "0xA7a034e0e5958C4F1b9051597e715d13059866f8",
       data: avalancheData2
     };
     let avalanchePartialUserOp2 = await biconomySmartAccountAvalanche.buildUserOp([avalancheTransection2]);
