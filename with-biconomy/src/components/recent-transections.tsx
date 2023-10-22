@@ -1,10 +1,12 @@
+import { useStateContext } from "@/context";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 export default function RecentTransections() {
+    const {transactions}=useStateContext();
     return (
         <div className="space-y-8 mt-3">
             {
-                [1, 2, 3, 4].map((_, index) => {
+                transactions && transactions.map((transaction, index) => {
                     return (
                         <div className="flex items-center" key={index}>
                             <Avatar className="h-9 w-9">
@@ -12,9 +14,9 @@ export default function RecentTransections() {
                                 <AvatarFallback>OM</AvatarFallback>
                             </Avatar>
                             <div className="ml-4 space-y-1">
-                                <p className="text-sm font-medium leading-none">0xf23..222</p>
+                                <p className="text-sm font-medium leading-none">{transaction.receiverAddress}</p>
                             </div>
-                            <div className="ml-auto font-medium">0.21 ETH</div>
+                            <div className="ml-auto font-medium">{transaction.amountSend} aUSDC</div>
                         </div>
                     )
                 })

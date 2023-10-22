@@ -13,6 +13,8 @@ export  default async function handler(
 ) {
   if(req.method==="GET"){
     const {walletAddress}=req.body;
+    console.log(walletAddress);
+    
     try{
       const transactions = await prisma.transaction.findMany({
         where:{

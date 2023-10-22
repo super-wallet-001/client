@@ -18,6 +18,9 @@ import { MultiChainValidationModule, DEFAULT_MULTICHAIN_MODULE } from "@biconomy
 import { ethers } from "ethers";
 import { getWalletBalance } from "@/lib/getWalletbalance";
 import { useToast } from "@/components/ui/use-toast";
+import axios from "axios";
+import { Transaction } from "@prisma/client";
+
 
 interface State {
   mainAddress: string | null;
@@ -26,9 +29,10 @@ interface State {
   provider: ethers.providers.Provider | null;
   particle: ParticleAuthModule.ParticleNetwork;
   walletBalances: WalletBalances | null;
+  transactions:Transaction[] |null;
   connect: () => Promise<void>;
   removeFromLocalStorage: () => void;
-  executeSendToken: (walletAddress: string, chainId: string, tokenAddress: string, amountToSendFromChain1: number, amountToSendFromChain2: number) => Promise<void>;
+  executeSendToken: (receiverWalletAddress: string, chainId: string, tokenAddress: string, amountToSendFromChain1: number, amountToSendFromChain2: number) => Promise<void>;
 }
 
 
@@ -64,14 +68,16 @@ export function StateContextProvider({ children }: StateProviderProps) {
   const [smartAccounts, setSmartAccounts] = useState<BiconomySmartAccountV2[] | null>(null);
   const [provider, setProvider] = useState<ethers.providers.Provider | null>(null);
   const [walletBalances, setWalletBalances] = useState<WalletBalances | null>(null);
+  const [transactions,setTransactions]=useState<Transaction[]|null>(null);
   const {toast}=useToast();
 
-  function saveStateToLocalStorage(address: string, smartAccounts: BiconomySmartAccountV2[], provider: ethers.providers.Provider, balances: WalletBalances) {
+  function saveStateToLocalStorage(address: string, smartAccounts: BiconomySmartAccountV2[], provider: ethers.providers.Provider, balances: WalletBalances,transactions:Transaction[]|null) {
     const stateToSave = {
       mainAddress: address,
       smartAccounts,
       provider,
-      balances
+      balances,
+      transactions
     };
     localStorage.setItem('appState', JSON.stringify(stateToSave));
   };
@@ -91,6 +97,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
       setSmartAccounts(parsedState.smartAccounts);
       setProvider(parsedState.provider);
       setWalletBalances(parsedState.balances);
+      setTransactions(parsedState.transactions)
     }
   };
 
@@ -192,7 +199,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
       setAddress(walletAddressMumbai);
       setSmartAccounts([biconomySmartAccountMumbai, biconomySmartAccountAvalanche]);
       setScwLoading(false);
-      saveStateToLocalStorage(walletAddressMumbai, [biconomySmartAccountMumbai, biconomySmartAccountAvalanche], web3Provider, balance);
+      saveStateToLocalStorage(walletAddressMumbai, [biconomySmartAccountMumbai, biconomySmartAccountAvalanche], web3Provider, balance,transactions);
 
     } catch (error) {
       console.error("[ERROR_WHILE_CREATING_SMART_ACCOUNT]: ", error);
@@ -200,7 +207,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
   };
 
 
-  async function executeSendToken(walletAddress: string, chainId: string, tokenAddress: string, amountToSendFromChain1: number, amountToSendFromChain2: number): Promise<any> {
+  async function executeSendToken(receiverWalletAddress: string, chainId: string, tokenAddress: string, amountToSendFromChain1: number, amountToSendFromChain2: number): Promise<any> {
 
     const particleProvider = new ParticleProvider(particle.auth);
 
@@ -303,7 +310,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
       "function transfer(address to, uint256 value)"
     ])
     const mumabiData1 = erc20InterfaceMumbai.encodeFunctionData("transfer", [
-      walletAddress,
+      receiverWalletAddress,
       amountToSendFromChain2
     ]);
     const mumabiTransection1 = {
@@ -360,6 +367,30 @@ export function StateContextProvider({ children }: StateProviderProps) {
       console.log("error received ", e);
     }
 
+    try{
+      await axios.post(`${process.env.NEXT_PUBLIC_APP_URL}/api/save-transactions`,{
+        walletAddress:address,
+        receiverAddress:receiverWalletAddress,
+        amountSend:amountToSendFromChain2,
+      })
+    }catch(error){
+      console.log("error while saving the transaction: ",error);      
+    }
+    
+    try{
+      const response  = await axios.get(`${process.env.NEXT_PUBLIC_APP_URL}/api/fetch-transactions`,{
+        params:{
+          body:{
+            walletAddress:address,
+          }
+        }
+      })
+      setTransactions(response?.data?.allTransactions);
+      saveStateToLocalStorage(address!, [biconomySmartAccountMumbai, biconomySmartAccountAvalanche], web3Provider, walletBalances!,transactions);
+    }catch(error){
+      console.log(error);
+    }
+
   }
 
   return (
@@ -371,6 +402,7 @@ export function StateContextProvider({ children }: StateProviderProps) {
         provider,
         particle,
         walletBalances,
+        transactions,
         removeFromLocalStorage,
         executeSendToken,
         connect
